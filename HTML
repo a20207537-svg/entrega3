@@ -1,1 +1,58 @@
+library(tidyverse)
+library(MASS)  
+library(janitor)  
+library(car)   
+library(psych)
+library(DataExplorer)
+
+df <- read.csv("https://github.com/a20207537-svg/entrega3/raw/refs/heads/main/Base%20nueva%203.csv")
+df <- clean_names(df)
+
+df <- df %>%
+  mutate(across(c(casos_atentidos,
+                  x_de_cem, 
+                  x_de_feminicidios,
+                  personas_informadas,
+                  poblacion_mujer), as.numeric))
+
+modelo_lm <- lm(casos_atentidos ~ x_de_cem +
+                  x_de_feminicidios +
+                  personas_informadas +
+                  poblacion_mujer,
+                data = df)
+
+summary(modelo_lm)
+
+## Call:
+## lm(formula = casos_atentidos ~ x_de_cem + x_de_feminicidios + 
+##     personas_informadas + poblacion_mujer, data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3677.5  -124.3     7.6   154.7  5505.7 
+## 
+## Coefficients:
+##                       Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)         -3.507e+02  1.031e+02  -3.401 0.000819 ***
+## x_de_cem             1.633e+02  7.136e+01   2.288 0.023219 *  
+## x_de_feminicidios    1.116e+02  6.291e+01   1.774 0.077736 .  
+## personas_informadas  9.861e-02  1.378e-02   7.154 1.80e-11 ***
+## poblacion_mujer      4.617e-03  5.332e-04   8.660 2.07e-15 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 607.8 on 189 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.954,  Adjusted R-squared:  0.953 
+## F-statistic: 979.1 on 4 and 189 DF,  p-value: < 2.2e-16
+
+# Diagnósticos
+vif(modelo_lm)
+
+##            x_de_cem   x_de_feminicidios personas_informadas     poblacion_mujer 
+##            1.478400            1.032583           16.182288           15.565221
+
+plot(modelo_lm)
+
+
 
